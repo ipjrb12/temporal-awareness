@@ -18,6 +18,7 @@ from .backends import (
     MLXBackend,
     OpenAIBackend,
     AnthropicBackend,
+    GeminiBackend,
     get_recommended_backend_inference,
 )
 from .generated_trajectory import (
@@ -56,6 +57,16 @@ class ModelRunner:
             self._init_anthropic()
             self._is_chat_model = True  # API models are always chat
             print(f"Model loaded: Anthropic API {self.model_name}")
+            return
+        elif model_name.startswith("gemini:"):
+            self.model_name = model_name[7:]
+            self._backend = ModelBackend.GEMINI
+            self.device = "cpu"
+            self.dtype = torch.float32
+            self._model = None
+            self._init_gemini()
+            self._is_chat_model = True
+            print(f"Model loaded: Gemini API {self.model_name}")
             return
 
         self.model_name = model_name
@@ -940,6 +951,9 @@ class ModelRunner:
 
     def _init_anthropic(self) -> None:
         self._backend = AnthropicBackend(self, model=self.model_name)
+
+    def _init_gemini(self) -> None:
+        self._backend = GeminiBackend(self, model=self.model_name)
 
     def _detect_chat_model(self, model_name: str) -> bool:
         """Detect if model is a chat/instruct model based on name.
