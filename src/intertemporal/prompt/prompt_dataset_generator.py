@@ -195,7 +195,17 @@ class PromptDatasetGenerator:
         return round(value)
 
     def _round_time(self, time: TimeValue) -> TimeValue:
-        """Round time to a nice whole number."""
+        """Round time to a nice whole number, rescaling to a smaller unit if rounding would yield 0."""
+        # Cascade to a smaller unit until the rounded value is at least 1.
+        # Without this, a 0.5-year value would render as "0 years".
+        rescale_chain = ["years", "months", "weeks", "days", "hours", "seconds"]
+        if time.unit in rescale_chain:
+            idx = rescale_chain.index(time.unit)
+            for unit in rescale_chain[idx:]:
+                value = time.to_unit(unit)
+                if round(value) >= 1:
+                    return TimeValue(value=round(value), unit=unit)
+            return TimeValue(value=max(1, round(time.to_unit("seconds"))), unit="seconds")
         return TimeValue(value=round(time.value), unit=time.unit)
 
     def format_question(
