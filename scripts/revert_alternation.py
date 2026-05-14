@@ -73,7 +73,7 @@ def revert_to_invariant_AB(target_file=None):
         new_filename = target_file
         output_path = os.path.join(output_dir, new_filename)
         process_file(input_path, output_path, label_pattern)
-        print(f"\nDone. Processed 1 file.")
+        print("\nDone. Processed 1 file.")
     else:
         files_processed = 0
         for filename in os.listdir(input_dir):
