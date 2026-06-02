@@ -356,7 +356,7 @@ def format_messages(messages, tokenizer, add_generation_prompt=True):
     template when available; falls back to a plain few-shot concatenation."""
     if _has_chat_template(tokenizer):
         return tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=add_generation_prompt)
+            messages, tokenize=False, add_generation_prompt=add_generation_prompt, enable_thinking=True)
     parts = []
     for m in messages:
         if m["role"] == "system":
