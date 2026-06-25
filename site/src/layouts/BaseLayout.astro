@@ -1,0 +1,178 @@
+---
+import "../styles/global.css";
+import { BASE, REPO_URL, ISSUES_URL } from "../lib/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+  prose?: boolean;
+  frontmatter?: { title?: string; description?: string; prose?: boolean };
+}
+
+const props = Astro.props as Props;
+const fm = props.frontmatter ?? {};
+const title = props.title ?? fm.title ?? "Temporal Awareness";
+const description =
+  props.description ??
+  fm.description ??
+  "An Open Safety Project: detecting how AI models internally represent time — and why it matters.";
+const prose = props.prose ?? fm.prose ?? false;
+const fullTitle = title === "Temporal Awareness" ? title : `${title} · Temporal Awareness`;
+
+const nav = [
+  { href: `${BASE}`, label: "Home" },
+  { href: `${BASE}understand`, label: "Understand" },
+  { href: `${BASE}what-we-score`, label: "What we score" },
+  { href: `${BASE}explore`, label: "Explore" },
+  { href: `${BASE}contribute`, label: "Contribute" },
+];
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Set the theme before first paint (no flash). Inline + synchronous on purpose. -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var dark = stored
+            ? stored === "dark"
+            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.classList.toggle("dark", dark);
+        } catch (e) {}
+      })();
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Libre+Franklin:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <header class="sticky top-0 z-30 border-b border-rule bg-paper/90 backdrop-blur">
+      <nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-2.5">
+        <a href={`${BASE}`} class="font-display text-lg font-bold tracking-tight text-ink">
+          Temporal Awareness
+        </a>
+        <div class="flex items-center gap-3 sm:gap-5">
+          <div class="hidden items-center gap-5 sm:flex">
+            {
+              nav.map((item) => {
+                const active = path === item.href || (item.href !== BASE && path.startsWith(item.href));
+                return (
+                  <a
+                    href={item.href}
+                    class={`font-sans text-xs font-semibold uppercase tracking-widest transition ${
+                      active ? "text-accent-700 dark:text-accent-400" : "text-ink-soft hover:text-ink"
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                );
+              })
+            }
+            <a
+              href={ISSUES_URL}
+              class="font-sans text-xs font-semibold uppercase tracking-widest text-accent-700 hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+            >
+              Browse issues →
+            </a>
+          </div>
+          <button
+            id="theme-toggle"
+            type="button"
+            aria-label="Toggle dark mode"
+            title="Toggle dark mode"
+            class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-rule text-ink-soft transition hover:border-accent-500 hover:text-ink"
+          >
+            <svg
+              class="h-[18px] w-[18px] dark:hidden"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path>
+            </svg>
+            <svg
+              class="hidden h-[18px] w-[18px] dark:block"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="4"></circle>
+              <path
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    {
+      prose ? (
+        <main class="prose-site mx-auto w-full max-w-3xl flex-1 px-4 py-12">
+          <slot />
+        </main>
+      ) : (
+        <main class="flex-1">
+          <slot />
+        </main>
+      )
+    }
+
+    <footer class="border-t border-rule">
+      <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-ink-soft sm:flex-row sm:items-center sm:justify-between">
+        <p class="font-sans">
+          <span class="font-semibold text-ink">Temporal Awareness</span> — an Open Safety Project · MIT licensed
+        </p>
+        <div class="flex gap-5 font-sans text-xs uppercase tracking-widest">
+          <a href={REPO_URL} class="hover:text-ink">GitHub</a>
+          <a href={`${BASE}contribute`} class="hover:text-ink">Contribute</a>
+          <a href={`${BASE}start-here`} class="hover:text-ink">Start here</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Toggle wiring: flip + persist on click; keep following the OS until the user chooses. -->
+    <script is:inline>
+      (function () {
+        var btn = document.getElementById("theme-toggle");
+        if (!btn) return;
+        function apply(dark) {
+          document.documentElement.classList.toggle("dark", dark);
+        }
+        btn.addEventListener("click", function () {
+          var dark = !document.documentElement.classList.contains("dark");
+          apply(dark);
+          try {
+            localStorage.setItem("theme", dark ? "dark" : "light");
+          } catch (e) {}
+        });
+        window
+          .matchMedia("(prefers-color-scheme: dark)")
+          .addEventListener("change", function (e) {
+            try {
+              if (localStorage.getItem("theme")) return;
+            } catch (err) {}
+            apply(e.matches);
+          });
+      })();
+    </script>
+  </body>
+</html>
