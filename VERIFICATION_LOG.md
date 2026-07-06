@@ -29,3 +29,9 @@
 6. **Output**: branch working-tree deletions undone (118 files, `src/common/` etc.)
    - **How verified**: `git ls-files --deleted` → 0; `git status --short` shows only the intentional `data_loader.py` modification and pre-existing untracked dirs; `src/common/auto_export.py` present; geoapp imports resolve (servers ran from main repo).
    - **Result**: VERIFIED
+
+## 2026-07-06 — geo bundle published to GitHub release `geo-bundles`
+
+7. **Output**: Release `geo-bundles` with `investment_geometry_analysis.zip` split into 20×25MB parts + `.manifest` (21 assets)
+   - **How verified**: local network corrupted large TLS uploads ("bad record MAC"; sandbox made it worse but 488MB failed even unsandboxed), so the bundle ships as parts. All 21 assets listed via API and matched against local files by name+size; then the full set was downloaded back from the public release URLs, reassembled, and SHA-256 compared: downloaded == local == manifest hash (8de28908…162b). Manifest flow of `run_geoapp_bundle.sh` tested end-to-end locally (assemble, checksum OK, 4,588 samples extracted, idempotent re-run, no-overwrite guard).
+   - **Result**: VERIFIED
