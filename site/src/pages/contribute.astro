@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import IssueBoard from "../components/IssueBoard.tsx";
+import { CONTRIBUTING_URL, RESEARCH_PROGRAM_URL } from "../lib/site";
+
+const steps = [
+  { n: 1, title: "Pick an issue", body: "Filter the board below. No experience? Start with a good first issue." },
+  { n: 2, title: "Claim it", body: "Open the issue and comment that you'd like to take it. A maintainer will assign you." },
+  { n: 3, title: "Set up", body: "Follow the 5-minute setup — many tasks need no GPU and no API keys." },
+  { n: 4, title: "Open a PR", body: "Small, focused PRs welcome. Ask questions in the PR; that's how we stay open." },
+];
+---
+
+<BaseLayout title="Contribute">
+  <section class="mx-auto max-w-4xl px-4 pt-12">
+    <p class="kicker-accent">Contribute</p>
+    <h1 class="font-display mt-2 text-4xl font-bold text-ink">Do real safety work — start small</h1>
+    <p class="mt-4 text-[1.075rem] leading-8 text-ink-soft">
+      This is an <strong class="text-ink">Open Safety Project</strong>: built so people new to AI safety can
+      make real contributions with a low barrier to entry. Every piece of work is a GitHub issue — claim one
+      and go.
+    </p>
+    <div class="mt-6 grid gap-px overflow-hidden rounded-lg border border-rule bg-rule sm:grid-cols-4">
+      {
+        steps.map((s) => (
+          <div class="bg-paper p-4">
+            <div class="font-sans text-xs font-bold uppercase tracking-wide text-accent-700">Step {s.n}</div>
+            <div class="mt-1 font-display font-bold text-ink">{s.title}</div>
+            <div class="mt-1 text-sm text-ink-soft">{s.body}</div>
+          </div>
+        ))
+      }
+    </div>
+    <p class="mt-5 text-sm text-ink-soft">
+      Full walkthrough in the <a class="link-accent" href={CONTRIBUTING_URL}>contributor guide</a>.
+      How issues map to Tracks and Thrusts: the <a class="link-accent" href={RESEARCH_PROGRAM_URL}>research program</a>.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-4xl px-4 py-10">
+    <h2 class="font-display mb-4 text-2xl font-bold text-ink">Open issues</h2>
+    <IssueBoard client:load />
+  </section>
+</BaseLayout>

@@ -1,0 +1,10 @@
+{
+  "threshold": 0.8304720520973206,
+  "youden_J": 0.9825581395348837,
+  "tpr_at_threshold": 0.9825581395348837,
+  "fpr_at_threshold": 0.0,
+  "conservative_threshold": 0.6671083480119705,
+  "cv_auroc": 0.9986159169550174,
+  "layer": 64,
+  "mode": "mean"
+}

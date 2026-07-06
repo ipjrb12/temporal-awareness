@@ -1,0 +1,38 @@
+name: Site CI
+
+# Build-checks the public website on pull requests that touch it. Kept separate
+# from ci.yml so it adds site coverage without changing the existing jobs, and the
+# path filter means it only runs when the site (or its export script) actually changes.
+on:
+  pull_request:
+    paths:
+      - "site/**"
+      - "scripts/site/**"
+      - ".github/workflows/site-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Install site dependencies
+        working-directory: site
+        run: npm ci
+      # Build under the GitHub Pages project base path so internal links are
+      # validated exactly as they resolve in production (where base is /temporal-awareness,
+      # not "/"). This is the condition that previously turned ${BASE}understand into a 404.
+      - name: Build site with the GitHub Pages project base path
+        working-directory: site
+        env:
+          PUBLIC_BASE_PATH: /temporal-awareness
+        run: npm run build
+      - name: Check built internal links resolve under the base path
+        env:
+          PUBLIC_BASE_PATH: /temporal-awareness
+        run: node scripts/site/check_built_links.mjs
