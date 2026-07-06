@@ -31,7 +31,7 @@ from .attn_pair_viz import visualize_attn_pair as _visualize_attn_pair_impl
 from ..fine.fine_results import LayerPositionResult
 
 if TYPE_CHECKING:
-    from ...common.sample_position_mapping import SamplePositionMapping
+    pass
 
 
 # ─── Style ──────────────────────────────────────────────────────────────────

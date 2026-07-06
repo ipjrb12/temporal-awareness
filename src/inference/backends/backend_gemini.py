@@ -9,7 +9,7 @@ from typing import Any, Optional
 import torch
 
 from .api_tokenizer import APITokenizer
-from .model_backend import Backend, BinaryChoiceResult
+from .model_backend import Backend
 from ..interventions import Intervention
 
 
